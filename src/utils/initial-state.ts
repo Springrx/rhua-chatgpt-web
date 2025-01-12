@@ -6,7 +6,8 @@ import {OpenAIAttribute} from "../interface/llm";
  */
 export const initialSessionSetting: SessionSetting = {
   userName: "我",
-  defaultModel: "gpt-3.5-turbo",
+  // defaultModel: "gpt-3.5-turbo",
+  defaultModel: "gpt-4o",
   defaultSummaryModel: "gpt-3.5-turbo",
   defaultVisionModel: "gpt-4o",
   defaultModelPrecision: "creativity",
@@ -21,10 +22,10 @@ export const initialSessionSetting: SessionSetting = {
 };
 
 export const initialOpenaiAttribute: OpenAIAttribute = {
-  baseURL: "https://chat.y-droid.com/llm/",
+  // baseURL: "https://chat.y-droid.com/llm/",
   apiKey: "4families",
-  // baseURL: "",
-  // apiKey: "",
+  // baseURL: "https://api.openai.com/v1",
+  baseURL: "http://10.177.44.113:5000",
   defaultModels: ['gpt-3.5-turbo', 'gpt-4', 'gpt-4-turbo', 'gpt-4o'],
   customModels: []
 };

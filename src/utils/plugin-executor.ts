@@ -34,7 +34,7 @@ class PluginExecutor {
       topP: getModelTopPByPrecision(sessionConfig?.modelPrecision ?? sessionSetting.defaultModelPrecision),
       modelName: this.modelName,
       openAIApiKey: this.apikey,
-      streaming: true,
+      streaming: false,
       maxTokens: sessionSetting.chatMaxToken
     }, {
       baseURL: this.baseURL
@@ -100,7 +100,6 @@ class PluginExecutor {
         }));
       }
     }
-
     const chatInput = new HumanMessage({
       content: MessageUtil.covertChatContent(inputMessage)
     });
@@ -129,7 +128,7 @@ class PluginExecutor {
 
     if (tools.length === 0) {
       const prompt = ChatPromptTemplate.fromMessages(promptMessages);
-      const chain = prompt.pipe(model);
+      const chain = prompt.pipe(model);    
       await chain.invoke({
         chat_history: chatHistory,
         chat_input: chatInput

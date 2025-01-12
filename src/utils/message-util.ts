@@ -23,12 +23,10 @@ export class MessageUtil {
       })
       if (message.additions) {
         for (let addition of message.additions) {
-          if (addition.type === 'image') {
+          if (addition.type === 'image'||addition.type === 'table') {
             chatContent.push({
-              type: 'image_url',
-              image_url: {
-                url: addition.content
-              }
+              type: addition.type,
+              file: addition.content              
             });
           } else if (addition.type === 'link') {
             chatContent.push({
@@ -40,7 +38,12 @@ export class MessageUtil {
       }
       messageContent = chatContent;
     } else {
-      messageContent = message.content;
+      const chatContent: MessageContentComplex[] = [];
+      chatContent.push({
+        type: "text",
+        text: message.content              
+      });
+      messageContent = chatContent;
     }
     return messageContent;
   }
@@ -75,7 +78,9 @@ export class MessageUtil {
     chatHistory.push(new AIMessage({
       content: botMessage
     }));
-    chatHistory.push(new HumanMessage("使用六到八个字直接返回这句话的简要主题，如果没有主题直接返回“闲聊对话”，注意主题中不要多余的解释和不要标点符号，主题中也不要语气词"));
+    chatHistory.push(
+      new HumanMessage("使用六到八个字直接返回这句话的简要主题，如果没有主题直接返回“闲聊对话”，注意主题中不要多余的解释和不要标点符号，主题中也不要语气词")
+    );
 
     const result = await model.invoke(chatHistory);
 
@@ -161,7 +166,6 @@ export class MessageUtil {
       }
       escapedText += char;
     }
-
     const pattern = /(```[\s\S]*?```|`.*?`)|\\\[([\s\S]*?[^\\])\\\]|\\\((.*?)\\\)/g;
     return escapedText.replace(
       pattern,
