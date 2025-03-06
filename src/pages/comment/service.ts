@@ -10,9 +10,7 @@ export async function uploadFile(file: any) {
         }
     ).then(res => res.json())
         .then(data => {
-            console.log(data);
             if (data['data']['file_url']) {
-                console.log('文件上传成功', data['data']['file_url']);
                 return data['data']['file_url'];
             }
             else {

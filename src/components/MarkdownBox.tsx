@@ -24,6 +24,9 @@ export const MarkdownBox: React.FC<MarkdownBoxProps> = React.memo(({ content }) 
     content = parts[0];
     image_src = parts[1];
   }
+  if(content .includes("Cannot read properties of undefined (reading 'message')")) {
+    content='很抱歉，出现错误。请重试。'
+  }
   return (
     <div>
       <Markdown

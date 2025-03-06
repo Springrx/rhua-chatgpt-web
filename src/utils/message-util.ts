@@ -5,7 +5,6 @@ import {ChatOpenAI} from "@langchain/openai";
 import {OpenAIAttribute} from "../interface/llm";
 import {SessionSetting} from "../interface/setting";
 import {initialOpenaiAttribute, initialSessionSetting} from "./initial-state";
-
 export class MessageUtil {
 
   /**
@@ -23,7 +22,17 @@ export class MessageUtil {
       })
       if (message.additions) {
         for (let addition of message.additions) {
-          if (addition.type === 'image'||addition.type === 'table') {
+          if(addition.type === 'image') {
+            chatContent.push({
+              type: 'image_url',
+              image_url: {'url':addition.content }   
+            });
+            // chatContent.push({
+            //   type: addition.type,
+            //   file: addition.content   
+            // });
+          }
+          else if (addition.type === 'table') {
             chatContent.push({
               type: addition.type,
               file: addition.content              
@@ -66,7 +75,8 @@ export class MessageUtil {
       temperature: 0.3,
       topP: 0.2,
       modelName: sessionSetting.defaultSummaryModel,
-      openAIApiKey: llmOpenAIAttribute.apiKey
+      openAIApiKey: llmOpenAIAttribute.apiKey,
+      // streaming: false,
     }, {
       baseURL: llmOpenAIAttribute.baseURL
     });
@@ -81,9 +91,12 @@ export class MessageUtil {
     chatHistory.push(
       new HumanMessage("使用六到八个字直接返回这句话的简要主题，如果没有主题直接返回“闲聊对话”，注意主题中不要多余的解释和不要标点符号，主题中也不要语气词")
     );
-
+    // await model.invoke(
+    //    chatHistory,
+    //   {
+    //   callbacks: [handler]
+    // });
     const result = await model.invoke(chatHistory);
-
     return typeof result.content === 'string'? result.content : "新的聊天";
   }
 

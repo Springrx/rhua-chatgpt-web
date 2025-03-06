@@ -29,11 +29,12 @@ const messageEqual = (prevProps: MessageBoxProps, currentProps: MessageBoxProps)
 const renderAddition = (type: string, content: string) => {
   let childNode = <></>
   if (type === "image") {
-    childNode = <Image
-      height={150}
-      src={content}
-      fallback={<IconUploadError style={{ fontSize: 150 }} />}
-    />
+    //   childNode = <Image
+    //   height={150}
+    //   src={content}
+    //   fallback={<IconUploadError style={{ fontSize: 150 }} />}
+    // />
+    childNode = <a href={content} style={{ color: 'var(--semi-color-primary)' }}>{content}</a>
   }
   if (type === "table") {
     childNode = <a href={content} style={{ color: 'var(--semi-color-primary)' }}>{content}</a>
@@ -115,7 +116,8 @@ export const UserMessageBox: React.FC<MessageBoxProps> = React.memo((
                   const childNode = renderAddition(addition.type, addition.content)
                   const prefixIcon = renderPrefixIcon(addition.type)
                   return <Tag
-                    style={addition.type === 'image' ? { marginTop: 5, height: '150px' } : { marginTop: 5 }}
+                    // style={addition.type === 'image'&&addition.content ? { marginTop: 5, height: '150px' } : { marginTop: 5 }}
+                    style={{ marginTop: 5 }}
                     key={message.id + "_" + index}
                     size="large"
                     color='light-blue'

@@ -14,7 +14,7 @@ import {
   IconHourglassStroked,
   IconLink, IconGlobeStroke,
   IconPlusCircleStroked,
-  IconSend, IconStarStroked, IconUserCircleStroked,
+  IconSend,
 } from "@douyinfe/semi-icons";
 import React, { createRef, useCallback, useEffect, useRef, useState } from "react";
 import { LocalForageService as storage } from "../../utils/storage";
@@ -25,7 +25,7 @@ import {
   IllustrationNoContent, IllustrationNoContentDark
 } from "@douyinfe/semi-illustrations";
 import { useNavigate } from "react-router-dom";
-import { TagProps } from "@douyinfe/semi-ui/lib/es/tag/interface";
+// import { TagProps } from "@douyinfe/semi-ui/lib/es/tag/interface";
 import { AdditionProps } from "../../interface/addition";
 import { ChatMessage, ChatMessageAddition, ChatSession } from "../../interface/message";
 import { OptionProps } from "@douyinfe/semi-ui/lib/es/select";
@@ -38,13 +38,14 @@ import { OpenAIAttribute } from "../../interface/llm";
 import { SessionSetting } from "../../interface/setting";
 import { initialOpenaiAttribute, initialSessionSetting } from "../../utils/initial-state";
 import { MessageShare } from "../../components/MessageShare";
-import { CommonUtil } from "../../utils/common-util";
+// import { CommonUtil } from "../../utils/common-util";
 import mermaid from "mermaid";
-import { IconRating, IconSpin } from "@douyinfe/semi-icons-lab";
+// import { IconRating, IconSpin } from "@douyinfe/semi-icons-lab";
 import { uploadFile } from "./service";
 import * as XLSX from 'xlsx';
 import {renderPrefixIcon} from "../../components/MessageBox"
-import { a } from "@douyinfe/semi-ui/lib/es/markdownRender/components";
+import { set } from "zod";
+
 function CommentIndex() {
   const [themeMode, setThemeMode] = useState<'light' | 'dark'>('dark');
   const [commentSessionList, setCommentSessionList] = useState<ChatSession[]>([]);
@@ -62,7 +63,9 @@ function CommentIndex() {
   const [sendAdditionType, setSendAdditionType] = useState<string>("");
   const [sendAdditionContent, setSendAdditionContent] = useState<string>("");
   const additionContentToBackend = useRef<any>({});
+  const [uploadState,setUploadState] = useState<boolean>(false);
   const [sendAdditionList, setSendAdditionList] = useState<AdditionProps[]>([]);
+  const uploadTip="支持上传小于1M的图片、表格"
   const sendAddition = (type: string) => {
 
     setSendAdditionType(type);
@@ -258,7 +261,9 @@ function CommentIndex() {
     const additions: ChatMessageAddition[] = [];
     if (sendAdditionList.length > 0) {
       for (const tagProp of sendAdditionList) {
+        setUploadState(true);
         const file_url = await uploadFile(tagProp.uploadFile)
+        setUploadState(false);
         if (typeof tagProp.tagKey === 'string') {
           const keys = tagProp.tagKey.split("_")
           if (keys.length == 2) {
@@ -847,7 +852,11 @@ function CommentIndex() {
       reader.readAsArrayBuffer(detail.fileInstance);
     }
   }
+
   const uploadProps = {
+    maxSize:1024,
+    accept: 'image/*, .csv, .xls, .xlsx',
+    limit:1,
     customRequest: async (detail: any) => {
       try {
         if (detail.file) {
@@ -1026,12 +1035,12 @@ function CommentIndex() {
                         children="上传附件"
                         onClick={() => sendAddition('file')}
                       />
-                      <Dropdown.Item
+                      {/* <Dropdown.Item
 
                         icon={<IconGlobeStroke />}
                         children="网页地址"
                         onClick={() => sendAddition('link')}
-                      />
+                      /> */}
                     </Dropdown.Menu>
                   }
                 >
@@ -1053,7 +1062,7 @@ function CommentIndex() {
                     type="primary"
                     icon={<IconSend />}
                     aria-label="发送"
-                    disabled={userChatContent === ""}
+                    disabled={userChatContent === ""||uploadState}
                     onClick={chatSubmit}
                   />
                 </Tooltip>
@@ -1122,7 +1131,7 @@ function CommentIndex() {
           // placeholder={sendAdditionType === 'file' ? "请上传附件" : "请填写网页地址"}
           /> : <Upload {...uploadProps}>
             <Button theme="light">
-              点击上传
+              {uploadTip}
             </Button>
           </Upload>}
           </Modal>
