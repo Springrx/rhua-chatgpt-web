@@ -26,21 +26,24 @@ const messageEqual = (prevProps: MessageBoxProps, currentProps: MessageBoxProps)
   return prevProps.message.completed === currentProps.message.completed
     && prevProps.message.content === currentProps.message.content;
 };
+/*
 const renderAddition = (type: string, content: string) => {
   let childNode = <></>
   if (type === "image") {
-    //   childNode = <Image
-    //   height={150}
-    //   src={content}
-    //   fallback={<IconUploadError style={{ fontSize: 150 }} />}
-    // />
+       childNode = <Image
+       height={150}
+       src={content}
+       fallback={<IconUploadError style={{ fontSize: 150 }} />}
+     />
     childNode = <a href={content} style={{ color: 'var(--semi-color-primary)' }}>{content}</a>
   }
+    
   if (type === "table") {
     childNode = <a href={content} style={{ color: 'var(--semi-color-primary)' }}>{content}</a>
   }
   return childNode;
 }
+  */
 export function renderPrefixIcon(type: string) {
   let prefixIcon = <></>
   if (type === "image") {
@@ -113,18 +116,33 @@ export const UserMessageBox: React.FC<MessageBoxProps> = React.memo((
             {
               message.additions !== undefined && message.additions.length > 0 && (
                 message.additions.map((addition, index) => {
-                  const childNode = renderAddition(addition.type, addition.content)
-                  const prefixIcon = renderPrefixIcon(addition.type)
-                  return <Tag
-                    // style={addition.type === 'image'&&addition.content ? { marginTop: 5, height: '150px' } : { marginTop: 5 }}
-                    style={{ marginTop: 5 }}
-                    key={message.id + "_" + index}
-                    size="large"
-                    color='light-blue'
-                    prefixIcon={prefixIcon}
-                    // shape='circle'
-                    children={childNode}
-                  />
+                  const prefixIcon = renderPrefixIcon(addition.type);
+                  return addition.type === "image" ? (
+                    <img
+                      key={message.id + "_" + index}
+                      src={addition.content}
+                      alt="用户上传的图片"
+                      style={{
+                        maxWidth: "300px",
+                        maxHeight: "300px",
+                        width: "auto",
+                        height: "auto",
+                        objectFit: "contain",//等比例缩放图片，不会裁剪内容
+                        marginTop: "5px",
+                        display: "block",//让图片独占一行
+                      }}
+                    />
+                  ) : (
+                    <Tag
+                      style={{ marginTop: 5 }}
+                      key={message.id + "_" + index}
+                      size="large"
+                      color="light-blue"
+                      prefixIcon={prefixIcon}
+                    >
+                      {addition.content}
+                    </Tag>
+                  );
                 })
               )
             }
